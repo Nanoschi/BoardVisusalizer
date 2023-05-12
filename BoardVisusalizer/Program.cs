@@ -10,11 +10,11 @@ namespace BoardVisualizer
         const int WIN_WIDTH = 800;
         const int WIN_HEIGHT = 800;
 
-        Board ViewingBoard = new Board(0, 0, WIN_WIDTH);
+        Board ViewingBoard = new Board(20, 80, WIN_WIDTH - 100);
 
-        int SectionSize = 8;
-        int SectionTop = 0;
-        int SectionLeft = 0;
+        int SectionTop = 1;
+        int SectionLeft = 1;
+        int SectionSize = 4;
 
         public App()
         {
@@ -24,13 +24,14 @@ namespace BoardVisualizer
         private void DrawApp()
         {
             ViewingBoard.DrawSection(SectionLeft, SectionTop, SectionSize, SectionSize);
+            Raylib.DrawText(ViewingBoard.GetHoveredSquare(SectionLeft, SectionTop, SectionSize, SectionSize).ToString(), 0, 0, 40, Color.RED);
         }
 
         public void Run()
         {
             Raylib.InitWindow(WIN_WIDTH, WIN_HEIGHT, "Board Visualizer");
             ViewingBoard.LoadTextures();
-
+            ViewingBoard.SetUpFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
 
             while (!Raylib.WindowShouldClose())
             {

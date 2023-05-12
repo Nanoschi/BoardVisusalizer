@@ -111,6 +111,11 @@ namespace ChessDatatypes
             return pos;
         }
 
+        public static Position GetStartPosition()
+        {
+            return FromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+        }
+
     }
     
 }

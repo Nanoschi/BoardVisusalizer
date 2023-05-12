@@ -50,9 +50,24 @@ namespace InteractableBoard
             };
         }
 
-        public bool IsInBounds((int file, int rank) square, int left, int top, int width, int height)
+        public (int rank, int file) GetHoveredSquare(int left, int top, int width, int height)
         {
-            return (square.file >= left) && (square.file < left + width) && (square.rank >= top) && (square.rank < top + height);
+            int squareSize = BoardSize / width;
+
+            Vector2 mousePos = Raylib.GetMousePosition();
+
+            if (mousePos.X < BoardX || mousePos.X > BoardX + BoardSize || mousePos.Y < BoardY || mousePos.Y > BoardY + BoardSize)
+            {
+                return (-1, -1);
+            }
+
+            mousePos.X -= BoardX; 
+            mousePos.Y -= BoardY;
+
+            int hoverdFile = (int)(mousePos.X / squareSize + left);
+            int hoverdRank = (int)(mousePos.Y / squareSize + top);
+
+            return (hoverdFile, hoverdRank);
         }
 
         public bool IsSquareWhite(int rank, int file)
@@ -109,7 +124,7 @@ namespace InteractableBoard
                         float scaledImageX = (file * squareSize) + (squareSize - scaledImageSize) / 2f;
                         float scaledImageY = (rank * squareSize) + (squareSize - scaledImageSize) / 2f;
 
-                        Vector2 pos = new Vector2(scaledImageX, scaledImageY);
+                        Vector2 pos = new Vector2(scaledImageX + BoardX, scaledImageY + BoardY);
 
                         Raylib.DrawTextureEx(texture, pos, 0, scale, Color.WHITE);
                     }
@@ -125,5 +140,12 @@ namespace InteractableBoard
 
         }
 
+        public void SetUpFromFEN(string fen)
+        {
+            ActivePosition = Position.FromFEN(fen);
+        }
+
     }
+
+    
 }
