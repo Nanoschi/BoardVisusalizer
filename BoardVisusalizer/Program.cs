@@ -190,9 +190,12 @@ namespace BoardVisualizer
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.BLACK);
 
-                DrawSection(0, 0, 4, 4);
+                DrawSection(0, 0, 5, 5);
 
                 Raylib.EndDrawing();
+                
+
+
             }
         }
     }
