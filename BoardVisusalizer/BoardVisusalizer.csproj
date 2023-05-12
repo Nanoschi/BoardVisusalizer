@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\512h\b_bishop_png_512px.png" />
+    <None Remove="Images\512h\b_king_png_512px.png" />
+    <None Remove="Images\512h\b_knight_png_512px.png" />
+    <None Remove="Images\512h\b_pawn_png_512px.png" />
+    <None Remove="Images\512h\b_queen_png_512px.png" />
+    <None Remove="Images\512h\b_rook_png_512px.png" />
+    <None Remove="Images\512h\w_bishop_png_512px.png" />
+    <None Remove="Images\512h\w_king_png_512px.png" />
+    <None Remove="Images\512h\w_knight_png_512px.png" />
+    <None Remove="Images\512h\w_pawn_png_512px.png" />
+    <None Remove="Images\512h\w_queen_png_512px.png" />
+    <None Remove="Images\512h\w_rook_png_512px.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\512h\b_bishop_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\b_king_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\b_knight_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\b_pawn_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\b_queen_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\b_rook_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\w_bishop_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\w_king_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\w_knight_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\w_pawn_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\w_queen_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\512h\w_rook_png_512px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Raylib-cs" Version="4.5.0" />
+  </ItemGroup>
+
+</Project>
