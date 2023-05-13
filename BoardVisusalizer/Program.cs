@@ -5,26 +5,63 @@ using InteractableBoard;
 
 namespace BoardVisualizer
 {   
+    enum AppState
+    {
+        FullView,
+        QuadrantView,
+
+    }
     class App
     {
-        const int WIN_WIDTH = 800;
-        const int WIN_HEIGHT = 800;
+        const int BOARD_SIZE = 700;
+        const int SELECTION_HEIGHT = 100;
 
-        Board ViewingBoard = new Board(20, 80, WIN_WIDTH - 100);
+        const int WIN_WIDTH = BOARD_SIZE;
+        const int WIN_HEIGHT = BOARD_SIZE + 2 * SELECTION_HEIGHT;
 
-        int SectionTop = 1;
-        int SectionLeft = 1;
-        int SectionSize = 4;
+        Board ViewingBoard;
+
+        int SectionTop = 0;
+        int SectionLeft = 0;
+        int SectionSize = 8;
+
+        int QuadrantX = 0;
+        int QuadrantY = 0;
+
+        AppState State = AppState.FullView;
 
         public App()
         {
-
+            ViewingBoard = new Board(0, SELECTION_HEIGHT, BOARD_SIZE);
         }
 
         private void DrawApp()
         {
-            ViewingBoard.DrawSection(SectionLeft, SectionTop, SectionSize, SectionSize);
-            Raylib.DrawText(ViewingBoard.GetHoveredSquare(SectionLeft, SectionTop, SectionSize, SectionSize).ToString(), 0, 0, 40, Color.RED);
+            switch (State)
+            {
+                case AppState.FullView:
+                    ViewingBoard.DrawSection(0, 0, 8, 8);
+                    break;
+                case AppState.QuadrantView:
+                    ViewingBoard.DrawSection(QuadrantX, QuadrantY, 4, 4);
+                    break;
+            }
+        }
+
+        private void GetInput()
+        {
+            if (State == AppState.FullView)
+            {
+                if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
+                {
+                    Random rand = new Random();
+                    QuadrantX = rand.Next(0, 2);
+                    QuadrantY = rand.Next(0, 2);
+
+                    State = AppState.QuadrantView;
+                    Console.WriteLine("sdfsdfsdf");
+                }
+            }
         }
 
         public void Run()
@@ -38,6 +75,7 @@ namespace BoardVisualizer
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.BLACK);
 
+                GetInput();
                 DrawApp();
 
                 Raylib.EndDrawing();
