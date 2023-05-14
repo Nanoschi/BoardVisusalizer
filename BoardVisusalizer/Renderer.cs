@@ -15,7 +15,7 @@ namespace AppRenderer
     {
         public int XPos { get; set; }
         public int YPos { get; set; }
-        public int Size { get; set; }
+        public int Width { get; set; }
 
         public void Draw();
 
@@ -25,7 +25,7 @@ namespace AppRenderer
     {
         public int XPos { get; set; }
         public int YPos { get; set; }
-        public int Size { get; set; }
+        public int Width { get; set; }
 
         public static Color WhiteColor = Color.BEIGE;
         public static Color BlackColor = Color.DARKBROWN;
@@ -40,7 +40,7 @@ namespace AppRenderer
             CurrentPosition = new Position();
             this.XPos = xPos;
             this.YPos = yPos;
-            this.Size = size;
+            this.Width = size;
         }
 
         public void SetSection(int file, int rank, int size)
@@ -58,7 +58,7 @@ namespace AppRenderer
         private void DrawPieces()
         {
             const float localPieceScale = 0.7f;
-            int squareSize = Size / 8;
+            int squareSize = Width / 8;
 
             for (int rank = _sectionRank; rank  < _sectionRank + _sectionSize; rank++)
             {
@@ -95,7 +95,7 @@ namespace AppRenderer
 
         private void DrawSquares()
         {
-            int squareSize = Size / 8;
+            int squareSize = Width / 8;
 
             for (int rank = _sectionRank; rank < _sectionRank + _sectionSize; rank++)
             {
@@ -126,9 +126,21 @@ namespace AppRenderer
         {
             int outlineXPos = XPos - thickness;
             int outlineYPos = YPos - thickness;
-            int outlineSize = Size + 2 * thickness;
+            int outlineSize = Width + 2 * thickness;
             Raylib.DrawRectangle(outlineXPos, outlineYPos, outlineSize, outlineSize, Color.WHITE);
-            Raylib.DrawRectangle(XPos, YPos, Size, Size, Color.BLACK); 
+            Raylib.DrawRectangle(XPos, YPos, Width, Width, Color.BLACK); 
+        }
+
+        public (int file, int rank) GetSquareAtPosition(int x, int y)
+        {
+            int squareSize = Width / 8;
+            if ((x < XPos || y < YPos) || (x > XPos + Width || y > YPos + Width))
+            {
+                return (-1, -1);
+            }
+            int file = (x - XPos) / squareSize;
+            int rank = (y - YPos) / squareSize;
+            return (file, rank);
         }
 
         public void Draw() 
@@ -145,6 +157,52 @@ namespace AppRenderer
 
     }
 
+    internal class UISelector : IElement
+    {
+        public int XPos { get; set; }
+        public int YPos { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public bool IsWhite { get; set; }
+
+        private Color _backgroundColor = new Color(36, 37, 38, 255);
+
+        private static Pieces[] _whitePieces =
+        {
+            Pieces.W_PAWN,
+            Pieces.W_KNIGHT,
+            Pieces.W_BISHOP,
+            Pieces.W_ROOK,
+            Pieces.W_QUEEN,
+            Pieces.W_KING,
+        };
+
+        private static Pieces[] _blackPieces =
+        {
+            Pieces.B_PAWN,
+            Pieces.B_KNIGHT,
+            Pieces.B_BISHOP,
+            Pieces.B_ROOK,
+            Pieces.B_QUEEN,
+            Pieces.B_KING,
+        };
+
+        public UISelector(int xPos, int yPos, int width, int height, bool isWhite)
+        {
+            Height = height;
+            XPos = xPos;
+            YPos = yPos;
+            IsWhite = isWhite;
+            Width = width;
+        }
+
+        public void Draw()
+        {
+            Raylib.DrawRectangle(XPos, YPos, Width, Height, _backgroundColor);
+        }
+    }
+
     
         
     internal class Renderer
@@ -154,14 +212,17 @@ namespace AppRenderer
         private int _timeFontSize = 40;
         private Color _timeFontColor = Color.SKYBLUE;
 
-        public UIBoard Board { get; set; }
+        public UIBoard Board { get; set; } = new UIBoard(0, 0, 100);
+        public UISelector WhiteSelector { get; set; } = new UISelector(0, 0, 100, 50, true);
+
+        public static bool ArePiecesLoaded { get; private set;  } = false;
 
         public void DrawSeconds(float timeInS)
         {
             string formatedTime = timeInS.ToString("0.0");
             int textSize = Raylib.MeasureText(formatedTime, _timeFontSize);
             int YPos = Board.YPos + 5;
-            int XPos = (Board.Size / 2) - (textSize / 2) + Board.XPos;
+            int XPos = (Board.Width / 2) - (textSize / 2) + Board.XPos;
             Raylib.DrawText(formatedTime, XPos, YPos, _timeFontSize, _timeFontColor);
 
         }
@@ -169,11 +230,17 @@ namespace AppRenderer
         public void DrawApp()
         {
             Board.Draw();
+            WhiteSelector.Draw();
         }
 
         public void SetBoard(int xPos, int yPos, int size)
         {
             Board = new UIBoard(xPos, yPos, size);
+        }
+
+        public void SetWhiteSelector(int xPos, int yPos, int width, int height)
+        {
+            WhiteSelector = new UISelector(xPos, yPos, width, height, true);
         }
 
         public static void LoadPieceTextures()
@@ -193,6 +260,7 @@ namespace AppRenderer
                 [Pieces.B_KNIGHT] = Raylib.LoadTexture("Images/512h/b_knight_png_512px.png"),
                 [Pieces.B_PAWN] = Raylib.LoadTexture("Images/512h/b_pawn_png_512px.png"),
             };
+            ArePiecesLoaded = true;
         }
 
 

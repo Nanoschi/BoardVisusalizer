@@ -20,7 +20,7 @@ namespace BoardVisualizer
         float TimeInS = 0;
 
         const int BoardSize = 600;
-        const int SelectionHeight = 50;
+        const int SelectionHeight = 100;
 
         const int WIN_WIDTH = BoardSize;
         const int WIN_HEIGHT = BoardSize + 2 * SelectionHeight;
@@ -44,7 +44,8 @@ namespace BoardVisualizer
             Renderer.LoadPieceTextures();
 
             RealPosition = Position.GetStartPosition();
-            renderer.SetBoard(0, SelectionHeight, BoardSize);
+            renderer.SetBoard(0, SelectionHeight + 5, BoardSize);
+            renderer.SetWhiteSelector(0, 0, WIN_WIDTH, SelectionHeight);
             renderer.Board.SetUpPosition(RealPosition);
         }
 
@@ -112,6 +113,7 @@ namespace BoardVisualizer
                 GetUserInput();
                 renderer.DrawApp();
 
+                
                 if (State == AppState.TimeToRemember)
                 {
                     renderer.DrawSeconds(TimeInS);
