@@ -1,7 +1,8 @@
 ﻿using Raylib_cs;
 using System.IO.Compression;
 using System.Numerics;
-using InteractableBoard;
+using AppRenderer;
+using ChessDatatypes;
 
 namespace BoardVisualizer
 {   
@@ -13,13 +14,14 @@ namespace BoardVisualizer
     }
     class App
     {
-        const int BOARD_SIZE = 700;
-        const int SELECTION_HEIGHT = 100;
+        Renderer renderer = new Renderer();
+        const int BoardSize = 600;
+        const int SelectionHeight = 50;
 
-        const int WIN_WIDTH = BOARD_SIZE;
-        const int WIN_HEIGHT = BOARD_SIZE + 2 * SELECTION_HEIGHT;
+        const int WIN_WIDTH = BoardSize;
+        const int WIN_HEIGHT = BoardSize + 2 * SelectionHeight;
 
-        Board ViewingBoard;
+        
 
         int SectionTop = 0;
         int SectionLeft = 0;
@@ -32,23 +34,28 @@ namespace BoardVisualizer
 
         public App()
         {
-            ViewingBoard = new Board(0, SELECTION_HEIGHT, BOARD_SIZE);
+            Raylib.InitWindow(WIN_WIDTH, WIN_HEIGHT, "Board Visualizer");
+
+            Renderer.LoadPieceTextures();
+
+            renderer.SetBoard(0, SelectionHeight, BoardSize);
+            renderer.Board.SetUpPosition(Position.GetStartPosition());
         }
 
-        private void DrawApp()
+        private void ApplyAppState()
         {
             switch (State)
             {
                 case AppState.FullView:
-                    ViewingBoard.DrawSection(0, 0, 8, 8);
+                    renderer.Board.SetSection(0, 0, 8);
                     break;
                 case AppState.QuadrantView:
-                    ViewingBoard.DrawSection(QuadrantX, QuadrantY, 4, 4);
+                    renderer.Board.SetSection(QuadrantX * 4, QuadrantY * 4, 4);
                     break;
             }
         }
 
-        private void GetInput()
+        private void GetUserInput()
         {
             if (State == AppState.FullView)
             {
@@ -59,24 +66,34 @@ namespace BoardVisualizer
                     QuadrantY = rand.Next(0, 2);
 
                     State = AppState.QuadrantView;
-                    Console.WriteLine("sdfsdfsdf");
+
+                    ApplyAppState();
+                }
+            }
+
+            else if (State == AppState.QuadrantView)
+            {
+                if (Raylib.IsKeyPressed(KeyboardKey.KEY_F))
+                {
+                    State = AppState.FullView;
+                    ApplyAppState();
+
                 }
             }
         }
 
         public void Run()
         {
-            Raylib.InitWindow(WIN_WIDTH, WIN_HEIGHT, "Board Visualizer");
-            ViewingBoard.LoadTextures();
-            ViewingBoard.SetUpFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+            
+            
 
             while (!Raylib.WindowShouldClose())
             {
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.BLACK);
 
-                GetInput();
-                DrawApp();
+                GetUserInput();
+                renderer.DrawApp();
 
                 Raylib.EndDrawing();
 

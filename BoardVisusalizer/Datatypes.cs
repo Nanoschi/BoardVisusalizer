@@ -29,7 +29,7 @@ namespace ChessDatatypes
     {
         public Pieces[,] PositionArr { get; private set;  }
 
-        public static Dictionary<char, Pieces> FEN_PIECES = new Dictionary<char, Pieces>()
+        public static Dictionary<char, Pieces> FenPieces = new Dictionary<char, Pieces>()
         {
             ['K'] = Pieces.W_KING,
             ['Q'] = Pieces.W_QUEEN,
@@ -50,12 +50,12 @@ namespace ChessDatatypes
             PositionArr = new Pieces[8, 8];
         }
 
-        public void Set(int rank, int file, Pieces piece)
+        public void Set(int file, int rank, Pieces piece)
         {
             PositionArr[rank, file] = piece;
         }
 
-        public Pieces Get(int rank, int file)
+        public Pieces Get(int file, int rank)
         {
             return PositionArr[rank, file];
         }
@@ -82,9 +82,9 @@ namespace ChessDatatypes
 
             foreach (var item in fen)
             {
-                if (FEN_PIECES.TryGetValue(item, out var piece))
+                if (FenPieces.TryGetValue(item, out var piece))
                 {
-                    pos.Set(rank, file, piece);
+                    pos.Set(file, rank, piece);
                     file++;
                 }
                 else if (char.IsDigit(item))
@@ -114,6 +114,18 @@ namespace ChessDatatypes
         public static Position GetStartPosition()
         {
             return FromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+        }
+
+        public static bool IsSquareWhite(int file, int rank)
+        {
+            if (rank % 2 == 0)
+            {
+                return file % 2 == 0;
+            }
+            else
+            {
+                return !(file % 2 == 0);
+            }
         }
 
     }
