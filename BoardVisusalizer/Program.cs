@@ -9,28 +9,33 @@ namespace BoardVisualizer
     enum AppState
     {
         FullView,
-        QuadrantView,
+        TimeToRemember,
+        Guess,
+        PieceInput
 
     }
     class App
     {
         Renderer renderer = new Renderer();
+        float TimeInS = 0;
+
         const int BoardSize = 600;
         const int SelectionHeight = 50;
 
         const int WIN_WIDTH = BoardSize;
         const int WIN_HEIGHT = BoardSize + 2 * SelectionHeight;
-
         
-
-        int SectionTop = 0;
-        int SectionLeft = 0;
-        int SectionSize = 8;
 
         int QuadrantX = 0;
         int QuadrantY = 0;
 
         AppState State = AppState.FullView;
+
+        Position RealPosition = new Position();
+        Position GuessedPosition = new Position();
+        Pieces SelectedPiece;
+
+        float GuessTime = 5;
 
         public App()
         {
@@ -38,8 +43,9 @@ namespace BoardVisualizer
 
             Renderer.LoadPieceTextures();
 
+            RealPosition = Position.GetStartPosition();
             renderer.SetBoard(0, SelectionHeight, BoardSize);
-            renderer.Board.SetUpPosition(Position.GetStartPosition());
+            renderer.Board.SetUpPosition(RealPosition);
         }
 
         private void ApplyAppState()
@@ -48,8 +54,10 @@ namespace BoardVisualizer
             {
                 case AppState.FullView:
                     renderer.Board.SetSection(0, 0, 8);
+                    renderer.Board.SetUpPosition(RealPosition);
+                    TimeInS = GuessTime;
                     break;
-                case AppState.QuadrantView:
+                case AppState.TimeToRemember:
                     renderer.Board.SetSection(QuadrantX * 4, QuadrantY * 4, 4);
                     break;
             }
@@ -65,28 +73,37 @@ namespace BoardVisualizer
                     QuadrantX = rand.Next(0, 2);
                     QuadrantY = rand.Next(0, 2);
 
-                    State = AppState.QuadrantView;
+                    TimeInS = GuessTime;
+                    State = AppState.TimeToRemember;
 
                     ApplyAppState();
                 }
             }
 
-            else if (State == AppState.QuadrantView)
+            if (State == AppState.TimeToRemember)
             {
-                if (Raylib.IsKeyPressed(KeyboardKey.KEY_F))
+                TimeInS -= Raylib.GetFrameTime();
+
+
+                if (TimeInS <= 0f)
+                {
+                    State = AppState.Guess;
+                    renderer.Board.SetUpPosition(GuessedPosition);
+                }
+            }
+
+            if (State  != AppState.FullView) 
+            {
+                if (Raylib.IsKeyDown(KeyboardKey.KEY_R))
                 {
                     State = AppState.FullView;
                     ApplyAppState();
-
                 }
             }
         }
 
         public void Run()
         {
-            
-            
-
             while (!Raylib.WindowShouldClose())
             {
                 Raylib.BeginDrawing();
@@ -94,6 +111,12 @@ namespace BoardVisualizer
 
                 GetUserInput();
                 renderer.DrawApp();
+
+                if (State == AppState.TimeToRemember)
+                {
+                    renderer.DrawSeconds(TimeInS);
+                }
+
 
                 Raylib.EndDrawing();
 

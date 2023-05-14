@@ -48,6 +48,14 @@ namespace ChessDatatypes
         public Position()
         {
             PositionArr = new Pieces[8, 8];
+
+            for (int i = 0;  i < 8; i++)
+            {
+                for (int j = 0;  j < 8; j++)
+                {
+                    PositionArr[i, j] = Pieces.EMPTY;
+                }
+            }
         }
 
         public void Set(int file, int rank, Pieces piece)

@@ -50,7 +50,7 @@ namespace AppRenderer
             this._sectionSize = size;
         }
 
-        private bool IsInsideSection(int file, int rank)
+        public bool IsInsideSection(int file, int rank)
         {
             return (file >= _sectionFile) && (rank >= _sectionRank) && (file < _sectionFile + _sectionSize) && (file < _sectionFile + _sectionSize);
         }
@@ -70,20 +70,25 @@ namespace AppRenderer
                     }
                     Pieces SquarePiece = CurrentPosition.Get(file, rank);
 
-                    if (Renderer.PieceTextures.TryGetValue(SquarePiece, out var texture))
+                    if (SquarePiece == Pieces.EMPTY)
                     {
-                        float absoluteScale = (float)squareSize / (float)texture.width * localPieceScale;
-                        float scaledImageSize = texture.width * absoluteScale;
-                        float scaledImageX = (file * squareSize) + (squareSize - scaledImageSize) / 2f;
-                        float scaledImageY = (rank * squareSize) + (squareSize - scaledImageSize) / 2f;
-
-                        Vector2 pos = new Vector2(scaledImageX + XPos, scaledImageY + YPos);
-
-                        Raylib.DrawTextureEx(texture, pos, 0, absoluteScale, Color.WHITE);
-
-
-
+                        continue;
                     }
+
+                    
+                    Texture2D texture = Renderer.PieceTextures[SquarePiece];
+                    float absoluteScale = (float)squareSize / (float)texture.width * localPieceScale;
+                    float scaledImageSize = texture.width * absoluteScale;
+                    float scaledImageX = (file * squareSize) + (squareSize - scaledImageSize) / 2f;
+                    float scaledImageY = (rank * squareSize) + (squareSize - scaledImageSize) / 2f;
+
+                    Vector2 pos = new Vector2(scaledImageX + XPos, scaledImageY + YPos);
+
+                    Raylib.DrawTextureEx(texture, pos, 0, absoluteScale, Color.WHITE);
+
+
+
+                    
                 }
             }
         }
@@ -146,7 +151,20 @@ namespace AppRenderer
     {
         public static Dictionary<Pieces, Texture2D> PieceTextures { get; private set; } = new Dictionary<Pieces, Texture2D>();
 
+        private int _timeFontSize = 40;
+        private Color _timeFontColor = Color.SKYBLUE;
+
         public UIBoard Board { get; set; }
+
+        public void DrawSeconds(float timeInS)
+        {
+            string formatedTime = timeInS.ToString("0.0");
+            int textSize = Raylib.MeasureText(formatedTime, _timeFontSize);
+            int YPos = Board.YPos + 5;
+            int XPos = (Board.Size / 2) - (textSize / 2) + Board.XPos;
+            Raylib.DrawText(formatedTime, XPos, YPos, _timeFontSize, _timeFontColor);
+
+        }
         
         public void DrawApp()
         {
